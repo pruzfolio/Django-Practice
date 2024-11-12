@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C6 Forum - Post Details</title>
+    <style>
+        /* Reset margin and padding */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* General Styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        /* Post Styling */
+        .post {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .comment {
+            background-color: #f9f9f9;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .like-btn {
+            background-color: #007bff;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .like-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .comment-form {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        .comment-form input, .comment-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .comment-form button {
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .comment-form button:hover {
+            background-color: #0056b3;
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>C6 Forum</h1>
+        <nav>
+            <a href="{% url 'forums' %}">Forum</a> | 
+            <a href="{% url 'create_post' %}">Create Post</a> |
+            <a href="#">My Profile</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="post">
+            <h2>{{ post.title }}</h2>
+            <p>{{ post.content }}</p>
+            <p>
+                Likes: {{ post.like_count }} 
+                <button class="like-btn" data-post-id="{{ post.pk }}">👍 Like</button>
+            </p>
+        </div>
+
+        <div class="comments">
+            {% for comment in post.comments.all %}
+                <div class="comment">
+                    <p><strong>{{ comment.author }}</strong></p>
+                    <p>{{ comment.content }}</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="comment-form">
+            <form method="post">
+                {% csrf_token %}
+                <textarea name="content" rows="4" placeholder="Write a comment..."></textarea>
+                <button type="submit">Post Comment</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const likeButton = document.querySelector('.like-btn');
+
+            if (likeButton) {
+                likeButton.addEventListener('click', function () {
+                    const postId = this.getAttribute('data-post-id');
+                    const csrfToken = document.querySelector('[name="csrfmiddlewaretoken"]').value;
+
+                    fetch(`/like/${postId}/`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrfToken,
+                        },
+                        body: JSON.stringify({})
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.liked) {
+                            this.innerText = `👍 Liked (${data.like_count})`;
+                        } else {
+                            this.innerText = `👍 Like (${data.like_count})`;
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>

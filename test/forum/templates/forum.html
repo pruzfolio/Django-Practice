@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C6 Forum</title>
+    <style>
+        /* Reset margin and padding */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Page styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2em;
+        }
+
+        nav a {
+            color: #fff;
+            margin: 0 15px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #66ccff;
+        }
+
+        /* Main container */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Forum header styling */
+        .forum-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .forum-header h2 {
+            font-size: 1.8em;
+            color: #333;
+        }
+
+        /* Button styling */
+        .create-post-button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+        }
+
+        .create-post-button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Post styling */
+        .post {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            transition: transform 0.2s ease;
+        }
+
+        .post:hover {
+            transform: translateY(-5px);
+        }
+
+        .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+        }
+
+        .post-content {
+            flex: 1;
+        }
+
+        .post-title {
+            font-size: 1.4em;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .post-snippet {
+            color: #666;
+            margin-bottom: 12px;
+        }
+
+        .post-info {
+            font-size: 0.9em;
+            color: #999;
+        }
+
+        /* Responsive design */
+        @media (max-width: 600px) {
+            .forum-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .create-post-button {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>C6 Forum</h1>
+        <nav>
+            <a href="{% url 'forums' %}">Recent Topics</a>
+            <a href="#">Recently Solved</a>
+            <a href="#">Unanswered Topics</a>
+            <a href="#">Trending</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div class="forum-header">
+            <h2>Recent Forum Activity</h2>
+            <a href="{% url 'create_post' %}" class="create-post-button">Create New Post</a>
+        </div>
+
+        {% block content %}
+        
+        {% for post in posts %}
+        <div class="post">
+            <img src="https://via.placeholder.com/50" alt="User Avatar" class="avatar">
+            <div class="post-content">
+                <h3 class="post-title"><a href="{% url 'post_detail' post_id=post.pk %}">{{ post.title }}</a></h3>
+                <p class="post-snippet">{{ post.content|truncatechars:100 }}</p>
+                <div class="post-info">
+                    <span class="username">{{ post.user.username }}</span> • 
+                    <span class="category">Posted in {{ post.category.name }}</span> • 
+                    <span class="post-meta">{{ post.likes }} 👍 • {{ post.views }} 👁 • {{ post.created_at|timesince }} ago</span>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p style="text-align: center;">No posts yet. Be the first to <a href="{% url 'create_post' %}">create a post</a>!</p>
+        {% endfor %}
+        {% endblock %}
+    </main>
+</body>
+</html>
