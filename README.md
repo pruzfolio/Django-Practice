@@ -25,13 +25,4 @@ The **C6 Forum** is a prototype forum application built with Django. It allows u
 - Django 5.1.x (or compatible version)
 
 
-## Screenshots
 
-### Forum Homepage
-![Forum Homepage](screenshots/forum_homepage.png)
-
-### Post Creation Page
-![Post Creation Page](screenshots/post_creation.png)
-
-### Post Detail Page
-![Post Detail Page](screenshots/post_detail.png)
